@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cityexplorer.backend.place.dto.PlaceResponse;
@@ -26,9 +27,10 @@ public class PlaceController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<PlaceResponse>> getAllPlaces(
+    public ResponseEntity<Page<PlaceResponse>> getAllPlaces(@RequestParam(required = false) String name,
+            @RequestParam(required = false) String state, @RequestParam(required = false) String country,
             @PageableDefault(size = 10, sort = "id") Pageable pageable) {
-        return ResponseEntity.ok(placeService.getAllPlaces(pageable));
+        return ResponseEntity.ok(placeService.getAllPlaces(name, state, country, pageable));
     }
 
     @GetMapping("/{id}")

@@ -1,6 +1,5 @@
 package com.cityexplorer.backend.place.service;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -8,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.cityexplorer.backend.place.dto.PlaceResponse;
-
+import com.cityexplorer.backend.place.entity.Place;
 import com.cityexplorer.backend.place.repository.PlaceRepository;
 
 @Service
@@ -21,10 +20,32 @@ public class PlaceService {
         this.placeRepository = cityRepository;
     }
 
-    public Page<PlaceResponse> getAllPlaces(Pageable pageable) {
-        return placeRepository.findAll(pageable)
-                .map(place -> new PlaceResponse(place.getId(), place.getName(), place.getState(), place.getCountry(),
-                        place.getDescription(), place.getImageUrl(), place.getType()));
+    // api for listing all places with pagination
+    // api for searching places by name with pagination
+    public Page<PlaceResponse> getAllPlaces(String name, String state, String country, Pageable pageable) {
+
+        // convert blank filters to null so they are ignored by the query
+        name = (name == null || name.isBlank()) ? null : name.trim();
+        state = (state == null || state.isBlank()) ? null : state.trim();
+        country = (country == null || country.isBlank()) ? null : country.trim();
+        Page<Place> places = placeRepository.searchPlaces(name, state, country, pageable);
+
+        // if (name == null || name.isBlank()) {
+        // places = placeRepository.findAll(pageable);
+        // } else {
+        // places = placeRepository.findByNameContainingIgnoreCase(name.trim(),
+        // pageable);
+
+        // }
+
+        return places.map(place -> new PlaceResponse(
+                place.getId(),
+                place.getName(),
+                place.getState(),
+                place.getCountry(),
+                place.getDescription(),
+                place.getImageUrl(),
+                place.getType()));
     }
 
     public Optional<PlaceResponse> getCityById(Long id) {
