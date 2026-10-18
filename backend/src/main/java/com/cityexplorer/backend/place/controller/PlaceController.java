@@ -2,6 +2,9 @@ package com.cityexplorer.backend.place.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,8 +26,9 @@ public class PlaceController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PlaceResponse>> getAllPlaces() {
-        return ResponseEntity.ok(placeService.getAllPlaces());
+    public ResponseEntity<Page<PlaceResponse>> getAllPlaces(
+            @PageableDefault(size = 10, sort = "id") Pageable pageable) {
+        return ResponseEntity.ok(placeService.getAllPlaces(pageable));
     }
 
     @GetMapping("/{id}")
