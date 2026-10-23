@@ -58,6 +58,18 @@ public class GlobalExceptionHandler {
                         "message", exception.getMessage()));
     }
 
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<Map<String, Object>> handleIllegalState(
+            IllegalStateException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(Map.of(
+                        "status", 409,
+                        "error", "Conflict",
+                        "message", exception.getMessage()));
+    }
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<Map<String, Object>> handleDataIntegrityViolation(
             DataIntegrityViolationException exception) {

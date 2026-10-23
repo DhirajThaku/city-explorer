@@ -13,6 +13,8 @@ import com.cityexplorer.backend.place.repository.PlaceRepository;
 import com.cityexplorer.backend.user.entity.User;
 import com.cityexplorer.backend.user.repository.UserRepository;
 
+import org.springframework.transaction.annotation.Transactional;
+
 @Service
 public class FavoriteService {
     private final FavoriteRepository favoriteRepository;
@@ -45,6 +47,7 @@ public class FavoriteService {
 
     // get all places user's favorites
 
+    @Transactional(readOnly = true)
     public List<FavoriteResponse> getUserFavorites(String email) {
         // the logged user only get there places saved as favorite
         User user = userRepository.findByEmail(email)
@@ -54,5 +57,14 @@ public class FavoriteService {
                 // gather converted dtos in to a list
                 .collect(Collectors.toList());
 
+    }
+
+    public void removeFavorite(String email, Long placeId) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+
+        Favorite favorite = favoriteRepository.findByUser_IdAndPlace_Id(user.getId(), placeId)
+                .orElseThrow(() -> new RuntimeException("Place is not in favorites"));
+
+        favoriteRepository.delete(favorite);
     }
 }
