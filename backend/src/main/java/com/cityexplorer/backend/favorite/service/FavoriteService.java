@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.cityexplorer.backend.common.exception.ResourceNotFoundException;
 import com.cityexplorer.backend.favorite.dto.FavoriteResponse;
 import com.cityexplorer.backend.favorite.entity.Favorite;
 import com.cityexplorer.backend.favorite.repository.FavoriteRepository;
@@ -34,7 +35,7 @@ public class FavoriteService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         Place place = placeRepository.findById(placeId)
-                .orElseThrow(() -> new RuntimeException("Place not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Place not found"));
 
         boolean alreadyExists = favoriteRepository.existsByUser_IdAndPlace_Id(user.getId(), place.getId());
         if (alreadyExists) {
@@ -51,7 +52,7 @@ public class FavoriteService {
     public List<FavoriteResponse> getUserFavorites(String email) {
         // the logged user only get there places saved as favorite
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         return favoriteRepository.findByUser_Id(user.getId()).stream().map(FavoriteResponse::new)
                 // gather converted dtos in to a list
@@ -63,7 +64,7 @@ public class FavoriteService {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
 
         Favorite favorite = favoriteRepository.findByUser_IdAndPlace_Id(user.getId(), placeId)
-                .orElseThrow(() -> new RuntimeException("Place is not in favorites"));
+                .orElseThrow(() -> new ResourceNotFoundException("Place is not in favorites"));
 
         favoriteRepository.delete(favorite);
     }

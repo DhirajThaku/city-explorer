@@ -3,8 +3,10 @@ package com.cityexplorer.backend.user.service;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.cityexplorer.backend.common.exception.ResourceNotFoundException;
 import com.cityexplorer.backend.user.dto.LoginRequest;
 import com.cityexplorer.backend.user.dto.RegisterRequest;
+import com.cityexplorer.backend.user.dto.UserProfileResponse;
 import com.cityexplorer.backend.user.entity.User;
 import com.cityexplorer.backend.user.repository.UserRepository;
 
@@ -44,5 +46,11 @@ public class UserService {
         }
 
         return user;
+    }
+
+    public UserProfileResponse getMyProfile(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        return new UserProfileResponse(user);
     }
 }
