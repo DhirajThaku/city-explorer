@@ -2,6 +2,8 @@ package com.cityexplorer.backend.review.entity;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.UpdateTimestamp;
+
 import com.cityexplorer.backend.attraction.entity.Attraction;
 import com.cityexplorer.backend.user.entity.User;
 
@@ -39,11 +41,28 @@ public class Review {
     @Column(name = "created_at", insertable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at", insertable = false, updatable = false)
+    // @Column(name = "updated_at", insertable = false, updatable = false)
+    // private LocalDateTime updatedAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
     protected Review() {
         // required by JPA
+    }
+
+    public Review(User user, Attraction attraction, Integer rating, String comment) {
+        this.user = user;
+        this.attraction = attraction;
+        this.rating = rating;
+        this.comment = comment;
+    }
+
+    public void updateReview(Integer rating, String comment) {
+        this.rating = rating;
+        this.comment = comment;
+
     }
 
     public Long getId() {

@@ -53,8 +53,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
                 .body(Map.of(
-                        "status", 409,
-                        "error", "Conflict",
+                        "status", 400,
+                        "error", "Bad Request",
                         "message", exception.getMessage()));
     }
 

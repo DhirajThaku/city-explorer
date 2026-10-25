@@ -24,7 +24,7 @@ public class UserService {
         String email = request.getEmail().trim();
 
         if (userRepository.findByEmail(email).isPresent()) {
-            throw new IllegalArgumentException("Email is already registered.");
+            throw new IllegalStateException("Email is already registered.");
         }
 
         User user = new User();
