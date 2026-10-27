@@ -35,6 +35,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/places/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/attractions/{attractionId}/reviews").permitAll()
                         .requestMatchers("/error").permitAll()
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 // before checking above requests it runs the filter
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

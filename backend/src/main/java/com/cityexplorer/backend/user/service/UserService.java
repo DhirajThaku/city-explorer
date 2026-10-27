@@ -8,6 +8,7 @@ import com.cityexplorer.backend.user.dto.LoginRequest;
 import com.cityexplorer.backend.user.dto.RegisterRequest;
 import com.cityexplorer.backend.user.dto.UserProfileResponse;
 import com.cityexplorer.backend.user.entity.User;
+import com.cityexplorer.backend.user.entity.UserRole;
 import com.cityexplorer.backend.user.repository.UserRepository;
 
 @Service
@@ -32,6 +33,7 @@ public class UserService {
         user.setEmail(email);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
+        user.setRole(UserRole.ROLE_USER);
         return userRepository.save(user);
     }
 

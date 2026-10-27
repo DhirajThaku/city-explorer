@@ -3,6 +3,7 @@ package com.cityexplorer.backend.config;
 import java.io.IOException;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -15,6 +16,8 @@ import com.cityexplorer.backend.user.service.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import java.util.Collections;
+import java.util.List;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -54,15 +57,31 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     + (email != null && userRepository.findByEmail(email).isPresent()));
             // checking that after token validation the email which we have got from token
             // is exist or not
-            if (email == null || !userRepository.findByEmail(email).isPresent()) {
+            if (email == null) {
+                SecurityContextHolder.clearContext();
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid JWT subject");
+                return;
+            }
+            var userOptional = userRepository.findByEmail(email);
+            if (userOptional.isEmpty()) {
                 SecurityContextHolder.clearContext();
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User not found");
                 return;
             }
+            // if (email == null || !userRepository.findByEmail(email).isPresent()) {
+            // SecurityContextHolder.clearContext();
+            // response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User not found");
+            // return;
+            // }
+            var user = userOptional.get();
 
             if (SecurityContextHolder.getContext().getAuthentication() == null) {
+                // UsernamePasswordAuthenticationToken authentication = new
+                // UsernamePasswordAuthenticationToken(email,
+                // null, Collections.emptyList());
+
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(email,
-                        null, Collections.emptyList());
+                        null, List.of(new SimpleGrantedAuthority(user.getRole().name())));
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);

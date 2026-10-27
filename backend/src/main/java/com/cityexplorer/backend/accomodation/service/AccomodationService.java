@@ -2,6 +2,8 @@ package com.cityexplorer.backend.accomodation.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,8 +22,18 @@ public class AccomodationService {
         this.accomodationRepository = accomodationRepository;
     }
 
-    public List<AccomodationResponse> getAllAccomodatioins() {
-        return accomodationRepository.findAll().stream().map(this::mapToResponse).toList();
+    // added pagination below method
+    public Page<AccomodationResponse> getAllAccomodatioins(Long placeId, Pageable pageable) {
+
+        Page<Accomodation> accomodations;
+
+        if (placeId != null) {
+            accomodations = accomodationRepository.findByPlace_Id(placeId, pageable);
+        } else {
+            accomodations = accomodationRepository.findAll(pageable);
+        }
+        // return accomodationRepository.findAll(pageable).map(this::mapToResponse);
+        return accomodations.map(this::mapToResponse);
     }
 
     private AccomodationResponse mapToResponse(Accomodation accomodation) {
