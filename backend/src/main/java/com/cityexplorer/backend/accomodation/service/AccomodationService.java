@@ -7,19 +7,25 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cityexplorer.backend.accomodation.dto.AccomodationRequest;
 import com.cityexplorer.backend.accomodation.dto.AccomodationResponse;
 import com.cityexplorer.backend.accomodation.entity.Accomodation;
 import com.cityexplorer.backend.accomodation.repository.AccomodationRepository;
 import com.cityexplorer.backend.common.exception.ResourceNotFoundException;
+import com.cityexplorer.backend.place.entity.Place;
+import com.cityexplorer.backend.place.repository.PlaceRepository;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 public class AccomodationService {
 
     private final AccomodationRepository accomodationRepository;
 
-    public AccomodationService(AccomodationRepository accomodationRepository) {
+    private final PlaceRepository placeRepository;
+
+    public AccomodationService(AccomodationRepository accomodationRepository, PlaceRepository placeRepository) {
         this.accomodationRepository = accomodationRepository;
+        this.placeRepository = placeRepository;
     }
 
     // added pagination below method
@@ -34,6 +40,33 @@ public class AccomodationService {
         }
         // return accomodationRepository.findAll(pageable).map(this::mapToResponse);
         return accomodations.map(this::mapToResponse);
+    }
+
+    @Transactional
+    public AccomodationResponse createAccomodation(AccomodationRequest request) {
+        Place place = placeRepository.findById(request.placeId())
+                .orElseThrow(() -> new ResourceNotFoundException("Place not found"));
+
+        Accomodation accomodation = new Accomodation(place, request.name(), request.type(), request.address(),
+                request.pricePerNight());
+        Accomodation savedAccomodation = accomodationRepository.save(accomodation);
+
+        return mapToResponse(savedAccomodation);
+    }
+
+    public AccomodationResponse updateAccomodation(Long id, AccomodationRequest request) {
+
+        // check accomodation present or not
+        Accomodation accomodation = accomodationRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Accomodation not found"));
+
+        // check place present
+        Place place = placeRepository.findById(request.placeId())
+                .orElseThrow(() -> new ResourceNotFoundException("Place not found"));
+
+        accomodation.updateDetails(place, request.name(), request.type(), request.address(), request.pricePerNight());
+
+        return mapToResponse(accomodation);
     }
 
     private AccomodationResponse mapToResponse(Accomodation accomodation) {

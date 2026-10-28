@@ -42,6 +42,23 @@ public class Accomodation {
         // required by JPA
     }
 
+    // parameterized public constructor
+    public Accomodation(Place place, String name, String type, String address, BigDecimal pricePerNight) {
+        this.place = place;
+        this.name = name;
+        this.type = type;
+        this.address = address;
+        this.pricePerNight = pricePerNight;
+    }
+
+    public void updateDetails(Place place, String name, String type, String address, BigDecimal pricePerNight) {
+        this.place = place;
+        this.name = name;
+        this.type = type;
+        this.address = address;
+        this.pricePerNight = pricePerNight;
+    }
+
     public Long getId() {
         return id;
     }
@@ -60,6 +77,30 @@ public class Accomodation {
 
     public String getAddress() {
         return address;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setPlace(Place place) {
+        this.place = place;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setPricePerNight(BigDecimal pricePerNight) {
+        this.pricePerNight = pricePerNight;
     }
 
     public BigDecimal getPricePerNight() {
