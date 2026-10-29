@@ -2,6 +2,7 @@ package com.cityexplorer.backend.accomodation.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,7 +15,7 @@ import com.cityexplorer.backend.accomodation.dto.AccomodationResponse;
 import com.cityexplorer.backend.accomodation.service.AccomodationService;
 
 @RestController
-@RequestMapping("/api/admin/accomodations")
+@RequestMapping("/api/admin/accommodations")
 public class AdminAccomodationController {
     private final AccomodationService accomodationService;
 
@@ -36,4 +37,9 @@ public class AdminAccomodationController {
         return ResponseEntity.ok(response);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteAccomodation(@PathVariable Long id) {
+        accomodationService.deleteAccomodation(id);
+        return ResponseEntity.noContent().build();
+    }
 }

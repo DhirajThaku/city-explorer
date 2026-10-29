@@ -69,6 +69,14 @@ public class AccomodationService {
         return mapToResponse(accomodation);
     }
 
+    public void deleteAccomodation(Long id) {
+        // check id present
+        Accomodation accomodation = accomodationRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Accomodation not found"));
+
+        accomodationRepository.delete(accomodation);
+    }
+
     private AccomodationResponse mapToResponse(Accomodation accomodation) {
         return new AccomodationResponse(
                 accomodation.getId(),
