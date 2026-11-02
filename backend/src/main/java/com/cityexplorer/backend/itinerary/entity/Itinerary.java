@@ -1,4 +1,4 @@
-package com.cityexplorer.backend.itinerary;
+package com.cityexplorer.backend.itinerary.entity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -40,6 +40,13 @@ public class Itinerary {
 
     protected Itinerary() {
         // requried by jpa
+    }
+
+    public Itinerary(Long userId, String title, LocalDate startDate, LocalDate endDate) {
+        this.userId = userId;
+        this.title = title;
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
 
     @PrePersist
