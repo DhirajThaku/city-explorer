@@ -15,83 +15,83 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<Map<String, Object>> handleConstraintViolation(
-            ConstraintViolationException exception) {
+        @ExceptionHandler(ConstraintViolationException.class)
+        public ResponseEntity<Map<String, Object>> handleConstraintViolation(
+                        ConstraintViolationException exception) {
 
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(Map.of(
-                        "status", 400,
-                        "error", "Bad Request",
-                        "message", exception.getMessage()));
-    }
+                return ResponseEntity
+                                .status(HttpStatus.BAD_REQUEST)
+                                .body(Map.of(
+                                                "status", 400,
+                                                "error", "Bad Request",
+                                                "message", exception.getMessage()));
+        }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>> handleValidationErrors(
-            MethodArgumentNotValidException exception) {
+        @ExceptionHandler(MethodArgumentNotValidException.class)
+        public ResponseEntity<Map<String, Object>> handleValidationErrors(
+                        MethodArgumentNotValidException exception) {
 
-        String message = exception.getBindingResult()
-                .getFieldErrors()
-                .stream()
-                .map(error -> error.getDefaultMessage())
-                .findFirst()
-                .orElse("Invalid request");
+                String message = exception.getBindingResult()
+                                .getFieldErrors()
+                                .stream()
+                                .map(error -> error.getDefaultMessage())
+                                .findFirst()
+                                .orElse("Invalid request");
 
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(Map.of(
-                        "status", 400,
-                        "error", "Bad Request",
-                        "message", message));
-    }
+                return ResponseEntity
+                                .status(HttpStatus.BAD_REQUEST)
+                                .body(Map.of(
+                                                "status", 400,
+                                                "error", "Bad Request",
+                                                "message", message));
+        }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Map<String, Object>> handleIllegalArgument(
-            IllegalArgumentException exception) {
+        @ExceptionHandler(IllegalArgumentException.class)
+        public ResponseEntity<Map<String, Object>> handleIllegalArgument(
+                        IllegalArgumentException exception) {
 
-        return ResponseEntity
-                .status(HttpStatus.CONFLICT)
-                .body(Map.of(
-                        "status", 400,
-                        "error", "Bad Request",
-                        "message", exception.getMessage()));
-    }
+                return ResponseEntity
+                                .status(HttpStatus.BAD_REQUEST)
+                                .body(Map.of(
+                                                "status", 400,
+                                                "error", "Bad Request",
+                                                "message", exception.getMessage()));
+        }
 
-    @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<Map<String, Object>> handleIllegalState(
-            IllegalStateException exception) {
+        @ExceptionHandler(IllegalStateException.class)
+        public ResponseEntity<Map<String, Object>> handleIllegalState(
+                        IllegalStateException exception) {
 
-        return ResponseEntity
-                .status(HttpStatus.CONFLICT)
-                .body(Map.of(
-                        "status", 409,
-                        "error", "Conflict",
-                        "message", exception.getMessage()));
-    }
+                return ResponseEntity
+                                .status(HttpStatus.CONFLICT)
+                                .body(Map.of(
+                                                "status", 409,
+                                                "error", "Conflict",
+                                                "message", exception.getMessage()));
+        }
 
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<Map<String, Object>> handleDataIntegrityViolation(
-            DataIntegrityViolationException exception) {
+        @ExceptionHandler(DataIntegrityViolationException.class)
+        public ResponseEntity<Map<String, Object>> handleDataIntegrityViolation(
+                        DataIntegrityViolationException exception) {
 
-        return ResponseEntity
-                .status(HttpStatus.CONFLICT)
-                .body(Map.of(
-                        "status", 409,
-                        "error", "Conflict",
-                        "message", "A record with the supplied unique value already exists"));
-    }
+                return ResponseEntity
+                                .status(HttpStatus.CONFLICT)
+                                .body(Map.of(
+                                                "status", 409,
+                                                "error", "Conflict",
+                                                "message", "A record with the supplied unique value already exists"));
+        }
 
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleResourceNotFound(
-            ResourceNotFoundException exception) {
+        @ExceptionHandler(ResourceNotFoundException.class)
+        public ResponseEntity<Map<String, Object>> handleResourceNotFound(
+                        ResourceNotFoundException exception) {
 
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(Map.of(
-                        "status", 404,
-                        "error", "Not Found",
-                        "message", exception.getMessage()));
-    }
+                return ResponseEntity
+                                .status(HttpStatus.NOT_FOUND)
+                                .body(Map.of(
+                                                "status", 404,
+                                                "error", "Not Found",
+                                                "message", exception.getMessage()));
+        }
 
 }

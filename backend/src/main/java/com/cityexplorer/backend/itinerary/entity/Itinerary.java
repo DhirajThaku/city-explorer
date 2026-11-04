@@ -42,6 +42,12 @@ public class Itinerary {
         // requried by jpa
     }
 
+    public void updateDetails(String title, LocalDate startDate, LocalDate endDate) {
+        this.title = title;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
+
     public Itinerary(Long userId, String title, LocalDate startDate, LocalDate endDate) {
         this.userId = userId;
         this.title = title;
