@@ -1,6 +1,7 @@
 package com.cityexplorer.backend.itinerary.service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -8,8 +9,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cityexplorer.backend.common.exception.ResourceNotFoundException;
+import com.cityexplorer.backend.itinerary.dto.ItineraryDayResponse;
 import com.cityexplorer.backend.itinerary.dto.ItineraryResponse;
 import com.cityexplorer.backend.itinerary.entity.Itinerary;
+import com.cityexplorer.backend.itinerary.entity.ItineraryDay;
+import com.cityexplorer.backend.itinerary.repository.ItineraryDayRepository;
 import com.cityexplorer.backend.itinerary.repository.ItineraryRepository;
 import com.cityexplorer.backend.user.entity.User;
 import com.cityexplorer.backend.user.repository.UserRepository;
@@ -19,13 +23,18 @@ public class ItineraryService {
 
     private final ItineraryRepository itineraryRepository;
     private final UserRepository userRepository;
+    // added when working on the itineraryDay
+    private final ItineraryDayRepository itineraryDayRepository;
 
-    public ItineraryService(ItineraryRepository itineraryRepository, UserRepository userRepository) {
+    public ItineraryService(ItineraryRepository itineraryRepository, UserRepository userRepository,
+            ItineraryDayRepository itineraryDayRepository) {
         this.itineraryRepository = itineraryRepository;
         this.userRepository = userRepository;
+        this.itineraryDayRepository = itineraryDayRepository;
 
     }
 
+    @Transactional
     public ItineraryResponse createItinerary(String email, String title, LocalDate startDate, LocalDate endDate) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
@@ -47,6 +56,17 @@ public class ItineraryService {
 
         Itinerary savedItinerary = itineraryRepository.save(itinerary);
 
+        // addding this logic for the ItineraryDay logic
+        List<ItineraryDay> days = new ArrayList<>();
+
+        int dayNumber = 1;
+        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+            ItineraryDay day = new ItineraryDay(savedItinerary, dayNumber);
+            days.add(day);
+            dayNumber++;
+
+        }
+        itineraryDayRepository.saveAll(days);
         return new ItineraryResponse(savedItinerary.getId(), savedItinerary.getTitle(), savedItinerary.getStartDate(),
                 savedItinerary.getEndDate(), savedItinerary.getCreatedAt());
 
@@ -117,6 +137,23 @@ public class ItineraryService {
                 .orElseThrow(() -> new ResourceNotFoundException("Itinerary not found for this user"));
 
         itineraryRepository.delete(itinerary);
+    }
+
+    public List<ItineraryDayResponse> getItineraryDays(String email, Long itineraryId) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        // verify that itinerary belongs to the authenticated user
+        itineraryRepository.findByIdAndUserId(itineraryId, user.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Itinerary not found"));
+
+        // Retrieve all days belonging to this itinerary
+        return itineraryDayRepository
+                .findAllByItinerary_IdOrderByDayNumberAsc(itineraryId)
+                .stream()
+                .map(day -> new ItineraryDayResponse(day.getId(), day.getDayNumber(), day.getCreatedAt()))
+                .collect(Collectors.toList());
     }
 
 }

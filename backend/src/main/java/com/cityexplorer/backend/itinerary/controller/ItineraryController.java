@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cityexplorer.backend.itinerary.dto.CreateItineraryRequest;
+import com.cityexplorer.backend.itinerary.dto.ItineraryDayResponse;
 import com.cityexplorer.backend.itinerary.dto.ItineraryResponse;
 import com.cityexplorer.backend.itinerary.dto.UpdateItineraryRequest;
 import com.cityexplorer.backend.itinerary.entity.Itinerary;
@@ -73,4 +74,14 @@ public class ItineraryController {
         return ResponseEntity.noContent().build();
 
     }
+
+    @GetMapping("/{itineraryId}/days")
+    public ResponseEntity<List<ItineraryDayResponse>> getItineraryDays(@PathVariable Long itineraryId,
+            Authentication authentication) {
+
+        List<ItineraryDayResponse> days = itineraryService.getItineraryDays(authentication.getName(), itineraryId);
+
+        return ResponseEntity.ok(days);
+    }
+
 }
