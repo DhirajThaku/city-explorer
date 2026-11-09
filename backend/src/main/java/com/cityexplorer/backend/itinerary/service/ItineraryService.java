@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cityexplorer.backend.attraction.repository.AttractionRepository;
 import com.cityexplorer.backend.common.exception.ResourceNotFoundException;
 import com.cityexplorer.backend.itinerary.dto.ItineraryDayResponse;
 import com.cityexplorer.backend.itinerary.dto.ItineraryResponse;
@@ -15,6 +16,7 @@ import com.cityexplorer.backend.itinerary.entity.Itinerary;
 import com.cityexplorer.backend.itinerary.entity.ItineraryDay;
 import com.cityexplorer.backend.itinerary.repository.ItineraryDayRepository;
 import com.cityexplorer.backend.itinerary.repository.ItineraryRepository;
+import com.cityexplorer.backend.itinerary.repository.ItineraryStopRepository;
 import com.cityexplorer.backend.user.entity.User;
 import com.cityexplorer.backend.user.repository.UserRepository;
 
@@ -26,12 +28,19 @@ public class ItineraryService {
     // added when working on the itineraryDay
     private final ItineraryDayRepository itineraryDayRepository;
 
+    // to find attraction selected by user
+    private final AttractionRepository attractionRepository;
+    // to save the and retrieve itinerary stops
+    private final ItineraryStopRepository itineraryStopRepository;
+
     public ItineraryService(ItineraryRepository itineraryRepository, UserRepository userRepository,
-            ItineraryDayRepository itineraryDayRepository) {
+            ItineraryDayRepository itineraryDayRepository, AttractionRepository attractionRepository,
+            ItineraryStopRepository itineraryStopRepository) {
         this.itineraryRepository = itineraryRepository;
         this.userRepository = userRepository;
         this.itineraryDayRepository = itineraryDayRepository;
-
+        this.itineraryStopRepository = itineraryStopRepository;
+        this.attractionRepository = attractionRepository;
     }
 
     @Transactional
@@ -67,6 +76,10 @@ public class ItineraryService {
 
         }
         itineraryDayRepository.saveAll(days);
+
+        // after adding the required days rows in the itineraryDay table with respect to
+        // itinerary return the response of itinerary
+
         return new ItineraryResponse(savedItinerary.getId(), savedItinerary.getTitle(), savedItinerary.getStartDate(),
                 savedItinerary.getEndDate(), savedItinerary.getCreatedAt());
 
