@@ -48,6 +48,10 @@ public class ItineraryStop {
         this.stopOrder = stopOrder;
     }
 
+    public void updateStopOrder(Integer stopOrder) {
+        this.stopOrder = stopOrder;
+    }
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();

@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cityexplorer.backend.itinerary.dto.AddItineraryStopRequest;
 import com.cityexplorer.backend.itinerary.dto.CreateItineraryRequest;
 import com.cityexplorer.backend.itinerary.dto.ItineraryDayResponse;
 import com.cityexplorer.backend.itinerary.dto.ItineraryResponse;
+import com.cityexplorer.backend.itinerary.dto.ItineraryStopResponse;
 import com.cityexplorer.backend.itinerary.dto.UpdateItineraryRequest;
 import com.cityexplorer.backend.itinerary.entity.Itinerary;
 import com.cityexplorer.backend.itinerary.repository.ItineraryRepository;
@@ -82,6 +84,37 @@ public class ItineraryController {
         List<ItineraryDayResponse> days = itineraryService.getItineraryDays(authentication.getName(), itineraryId);
 
         return ResponseEntity.ok(days);
+    }
+
+    @PostMapping("/{itineraryId}/days/{dayId}/stops")
+    public ResponseEntity<ItineraryStopResponse> addStop(@PathVariable Long itineraryId, @PathVariable Long dayId,
+            @RequestBody AddItineraryStopRequest request, Authentication authentication) {
+
+        // verify that the day belongs to the itinerary in the URL
+        // (we'll add this validation in the service in the next step)
+
+        ItineraryStopResponse response = itineraryService.addStop(authentication.getName(), itineraryId, dayId,
+                request.attractionId());
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping("/{itineraryId}/days/{dayId}/stops")
+    public ResponseEntity<List<ItineraryStopResponse>> getStops(@PathVariable Long itineraryId,
+            @PathVariable Long dayId, Authentication authentication) {
+
+        List<ItineraryStopResponse> stops = itineraryService.getStops(authentication.getName(), itineraryId, dayId);
+
+        return ResponseEntity.ok(stops);
+    }
+
+    @DeleteMapping("/{itineraryId}/days/{dayId}/stops/{stopId}")
+    public ResponseEntity<Void> deleteStop(@PathVariable Long itineraryId, @PathVariable Long dayId,
+            @PathVariable Long stopId, Authentication authentication) {
+
+        itineraryService.deleteStop(authentication.getName(), itineraryId, dayId, stopId);
+
+        return ResponseEntity.noContent().build();
     }
 
 }

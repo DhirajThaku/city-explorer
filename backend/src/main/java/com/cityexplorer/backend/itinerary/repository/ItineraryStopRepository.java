@@ -1,6 +1,7 @@
 package com.cityexplorer.backend.itinerary.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -19,4 +20,5 @@ public interface ItineraryStopRepository extends JpaRepository<ItineraryStop, Lo
             """)
     Integer findMaxStopOrderByItineraryDayId(@Param("itineraryDayId") Long itineraryDayId);
 
+    Optional<ItineraryStop> findByIdAndItineraryDay_Id(Long stopId, Long dayId);
 }
