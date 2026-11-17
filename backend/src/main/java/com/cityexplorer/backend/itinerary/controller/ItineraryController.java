@@ -19,10 +19,13 @@ import com.cityexplorer.backend.itinerary.dto.CreateItineraryRequest;
 import com.cityexplorer.backend.itinerary.dto.ItineraryDayResponse;
 import com.cityexplorer.backend.itinerary.dto.ItineraryResponse;
 import com.cityexplorer.backend.itinerary.dto.ItineraryStopResponse;
+import com.cityexplorer.backend.itinerary.dto.ReorderItineraryStopsRequest;
 import com.cityexplorer.backend.itinerary.dto.UpdateItineraryRequest;
 import com.cityexplorer.backend.itinerary.entity.Itinerary;
 import com.cityexplorer.backend.itinerary.repository.ItineraryRepository;
 import com.cityexplorer.backend.itinerary.service.ItineraryService;
+
+import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @RequestMapping("/api/itineraries")
@@ -35,6 +38,7 @@ public class ItineraryController {
         this.itineraryService = itineraryService;
     }
 
+    @Operation(summary = "Create an itinerary", description = "Creates a new itinerary for the authenticated user with a title, start date, and end date.")
     @PostMapping
     public ResponseEntity<ItineraryResponse> createItinerary(@RequestBody CreateItineraryRequest request,
             Authentication authentication) {
@@ -45,6 +49,7 @@ public class ItineraryController {
         return ResponseEntity.status(HttpStatus.CREATED).body(itinerary);
     }
 
+    @Operation(summary = "Get all itineraries", description = "Retrieves all itineraries created by the authenticated user.")
     @GetMapping
     public ResponseEntity<List<ItineraryResponse>> getAllItineraries(Authentication authentication) {
 
@@ -53,6 +58,7 @@ public class ItineraryController {
         return ResponseEntity.ok(itineraries);
     }
 
+    @Operation(summary = "Get itinerary by ID", description = "Retrieves a specific itinerary belonging to the authenticated user using its ID.")
     @GetMapping("/{id}")
     public ResponseEntity<ItineraryResponse> getItineraryById(Authentication authentication, @PathVariable Long id) {
         ItineraryResponse itineraryResponse = itineraryService.getItineraryById(authentication.getName(), id);
@@ -60,6 +66,7 @@ public class ItineraryController {
         return ResponseEntity.ok(itineraryResponse);
     }
 
+    @Operation(summary = "Update an itinerary", description = "Updates the title, start date, and end date of an existing itinerary belonging to the authenticated user.")
     @PutMapping("/{id}")
     public ResponseEntity<ItineraryResponse> updateItinerary(@PathVariable Long id,
             @RequestBody UpdateItineraryRequest request, Authentication authentication) {
@@ -69,6 +76,7 @@ public class ItineraryController {
         return ResponseEntity.ok(itinerary);
     }
 
+    @Operation(summary = "Delete an itinerary", description = "Deletes an existing itinerary belonging to the authenticated user.")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteItineary(@PathVariable Long id, Authentication authentication) {
         itineraryService.deleteItinerary(authentication.getName(), id);
@@ -77,6 +85,7 @@ public class ItineraryController {
 
     }
 
+    @Operation(summary = "Get itinerary days", description = "Retrieves all days associated with a specific itinerary belonging to the authenticated user.")
     @GetMapping("/{itineraryId}/days")
     public ResponseEntity<List<ItineraryDayResponse>> getItineraryDays(@PathVariable Long itineraryId,
             Authentication authentication) {
@@ -86,6 +95,7 @@ public class ItineraryController {
         return ResponseEntity.ok(days);
     }
 
+    @Operation(summary = "Add a stop to an itinerary day", description = "Adds an attraction as a stop to a specific day within the user's itinerary.")
     @PostMapping("/{itineraryId}/days/{dayId}/stops")
     public ResponseEntity<ItineraryStopResponse> addStop(@PathVariable Long itineraryId, @PathVariable Long dayId,
             @RequestBody AddItineraryStopRequest request, Authentication authentication) {
@@ -99,6 +109,7 @@ public class ItineraryController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @Operation(summary = "Get itinerary stops", description = "Retrieves all attraction stops added to a specific day of an itinerary.")
     @GetMapping("/{itineraryId}/days/{dayId}/stops")
     public ResponseEntity<List<ItineraryStopResponse>> getStops(@PathVariable Long itineraryId,
             @PathVariable Long dayId, Authentication authentication) {
@@ -108,6 +119,7 @@ public class ItineraryController {
         return ResponseEntity.ok(stops);
     }
 
+    @Operation(summary = "Delete an itinerary stop", description = "Removes a specific attraction stop from an itinerary day.")
     @DeleteMapping("/{itineraryId}/days/{dayId}/stops/{stopId}")
     public ResponseEntity<Void> deleteStop(@PathVariable Long itineraryId, @PathVariable Long dayId,
             @PathVariable Long stopId, Authentication authentication) {
@@ -115,6 +127,18 @@ public class ItineraryController {
         itineraryService.deleteStop(authentication.getName(), itineraryId, dayId, stopId);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Reorder itinerary stops", description = "Changes the visiting order of attraction stops within a specific itinerary day.")
+    @PutMapping("/{itineraryId}/days/{dayId}/stops/reorder")
+    public ResponseEntity<List<ItineraryStopResponse>> reorderStops(@PathVariable Long itineraryId,
+            @PathVariable Long dayId, @RequestBody ReorderItineraryStopsRequest request,
+            Authentication authentication) {
+
+        List<ItineraryStopResponse> stops = itineraryService.reorderStops(authentication.getName(), itineraryId, dayId,
+                request.stopIds());
+
+        return ResponseEntity.ok(stops);
     }
 
 }

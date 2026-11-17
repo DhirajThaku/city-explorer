@@ -15,6 +15,8 @@ import com.cityexplorer.backend.user.entity.User;
 import com.cityexplorer.backend.user.service.JwtService;
 import com.cityexplorer.backend.user.service.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import jakarta.validation.Valid;
 
 @RestController
@@ -28,6 +30,8 @@ public class AuthController {
         this.jwtService = jwtService;
     }
 
+    @Operation(summary = "Register a new user", description = "Creates a new user account. Authentication is not required.")
+    @SecurityRequirements
     @PostMapping("/register")
     public ResponseEntity<RegisterResponse> register(@Valid @RequestBody RegisterRequest request) {
 
@@ -38,6 +42,8 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @Operation(summary = "User login", description = "Authenticates a user and returns a JWT token.")
+    @SecurityRequirements
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
         User user = userService.login(request);

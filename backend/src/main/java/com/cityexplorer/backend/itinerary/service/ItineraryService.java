@@ -288,8 +288,12 @@ public class ItineraryService {
                 }
 
                 // 4. validate request
-                if (stopIds == null) {
+                if (stopIds == null || stopIds.isEmpty()) {
                         throw new IllegalArgumentException("Stop IDs are required");
+                }
+
+                if (stopIds.contains(null)) {
+                        throw new IllegalArgumentException("Stop IDs cannot contain null values");
                 }
 
                 if (new HashSet<>(stopIds).size() != stopIds.size()) {
@@ -305,6 +309,13 @@ public class ItineraryService {
 
                 for (ItineraryStop stop : stops) {
                         stopsById.put(stop.getId(), stop);
+                }
+
+                if (stopIds.size() != stops.size()
+                                || !stopsById.keySet().equals(new HashSet<>(stopIds))) {
+
+                        throw new IllegalArgumentException(
+                                        "Stop IDs must include every stop in this day exactly once");
                 }
 
                 // 7. Assign temporary orders to avoid unique constraint conflicts

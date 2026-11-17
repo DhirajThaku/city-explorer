@@ -13,6 +13,8 @@ import com.cityexplorer.backend.attraction.dto.AttractionResponse;
 
 import com.cityexplorer.backend.attraction.service.AttractionService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 
@@ -27,6 +29,8 @@ public class AttractionController {
         this.attractionService = attractionService;
     }
 
+    @Operation(summary = "Get attractions by place ID", description = "Retrieves all attractions associated with a specific place. The place ID must be a positive number.")
+    @SecurityRequirements
     @GetMapping
     public ResponseEntity<List<AttractionResponse>> getAttractionsByPlaceId(
             @Positive @PathVariable Long placeId) {

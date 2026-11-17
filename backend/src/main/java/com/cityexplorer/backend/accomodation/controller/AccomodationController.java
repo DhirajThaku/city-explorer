@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cityexplorer.backend.accomodation.dto.AccomodationResponse;
 import com.cityexplorer.backend.accomodation.service.AccomodationService;
 
+import io.swagger.v3.oas.annotations.Operation;
+
 @RestController
 @RequestMapping("/api/accommodations")
 public class AccomodationController {
@@ -26,6 +28,7 @@ public class AccomodationController {
 
     }
 
+    @Operation(summary = "Get all accommodations", description = "Retrieves a paginated list of accommodations, optionally filtered by place ID.")
     @GetMapping
     public ResponseEntity<Page<AccomodationResponse>> getAllAccomodations(
             @RequestParam(required = false) Long placeId,

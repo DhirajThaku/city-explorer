@@ -1,5 +1,6 @@
 package com.cityexplorer.backend.attraction.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -46,5 +47,20 @@ public class AttractionService {
                         attraction.getLongitude(),
                         attraction.getEntryFee()))
                 .toList();
+    }
+
+    public List<AttractionResponse> getNearbyAttractions(BigDecimal latitude, BigDecimal longitude, Double radius) {
+        List<Attraction> attractions = attractionRepository.findNearByAttractions(latitude, longitude, radius);
+
+        return attractions.stream().map(attraction -> new AttractionResponse(
+                attraction.getId(),
+                attraction.getPlaceId(),
+                attraction.getName(),
+                attraction.getDescription(),
+                attraction.getCategory(),
+                attraction.getAddress(),
+                attraction.getLatitude(),
+                attraction.getLongitude(),
+                attraction.getEntryFee())).toList();
     }
 }

@@ -16,6 +16,7 @@ import com.cityexplorer.backend.review.dto.ReviewRequest;
 import com.cityexplorer.backend.review.dto.ReviewResponse;
 import com.cityexplorer.backend.review.service.ReviewService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 
 @RestController
@@ -28,6 +29,7 @@ public class ReviewController {
         this.reviewService = reviewService;
     }
 
+    @Operation(summary = "Create a review", description = "Allows an authenticated user to submit a review for an attraction.")
     @PostMapping("/{attractionId}/reviews")
     public ResponseEntity<ReviewResponse> addReview(Authentication authentication, @PathVariable Long attractionId,
             @Valid @RequestBody ReviewRequest request) {
@@ -39,6 +41,7 @@ public class ReviewController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @Operation(summary = "Get reviews by attraction ID", description = "Retrieves all reviews submitted for a specific attraction.")
     @GetMapping("/{attractionId}/reviews")
     public ResponseEntity<List<ReviewResponse>> getReviewsByAttraction(@PathVariable Long attractionId) {
 
