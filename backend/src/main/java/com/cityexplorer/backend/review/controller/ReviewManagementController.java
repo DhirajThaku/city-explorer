@@ -13,6 +13,7 @@ import com.cityexplorer.backend.review.dto.ReviewRequest;
 import com.cityexplorer.backend.review.dto.ReviewResponse;
 import com.cityexplorer.backend.review.service.ReviewService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 
 @RestController
@@ -24,6 +25,7 @@ public class ReviewManagementController {
         this.reviewService = reviewService;
     }
 
+    @Operation(summary = "Update a review", description = "Updates an existing review belonging to the authenticated user.")
     @PatchMapping("/{reviewId}")
     public ResponseEntity<ReviewResponse> updateReview(Authentication authentication, @PathVariable Long reviewId,
             @Valid @RequestBody ReviewRequest request) {
@@ -35,6 +37,7 @@ public class ReviewManagementController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "Delete a review", description = "Deletes an existing review belonging to the authenticated user.")
     @DeleteMapping("/{reviewId}")
     public ResponseEntity<Void> deleteReview(Authentication authentication, @PathVariable Long reviewId) {
 

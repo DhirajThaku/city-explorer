@@ -15,6 +15,8 @@ import com.cityexplorer.backend.accomodation.dto.AccomodationRequest;
 import com.cityexplorer.backend.accomodation.dto.AccomodationResponse;
 import com.cityexplorer.backend.accomodation.service.AccomodationService;
 
+import io.swagger.v3.oas.annotations.Operation;
+
 @RestController
 @RequestMapping("/api/admin/accommodations")
 public class AdminAccomodationController {
@@ -25,12 +27,14 @@ public class AdminAccomodationController {
 
     }
 
+    @Operation(summary = "Create an accommodation", description = "Allows an admin to create a new accommodation.")
     @PostMapping
     public ResponseEntity<AccomodationResponse> createAccomodation(@RequestBody AccomodationRequest request) {
         AccomodationResponse response = accomodationService.createAccomodation(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @Operation(summary = "Update an accommodation", description = "Allows an admin to update an existing accommodation using its ID.")
     @PutMapping("/{id}")
     public ResponseEntity<AccomodationResponse> updateAccomodation(@PathVariable Long id,
             @RequestBody AccomodationRequest request) {
@@ -38,6 +42,7 @@ public class AdminAccomodationController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "Delete an accommodation", description = "Allows an admin to delete an existing accommodation using its ID.")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAccomodation(@PathVariable Long id) {
         accomodationService.deleteAccomodation(id);

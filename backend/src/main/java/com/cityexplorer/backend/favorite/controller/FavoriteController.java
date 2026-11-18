@@ -15,6 +15,8 @@ import com.cityexplorer.backend.favorite.dto.FavoriteResponse;
 import com.cityexplorer.backend.favorite.entity.Favorite;
 import com.cityexplorer.backend.favorite.service.FavoriteService;
 
+import io.swagger.v3.oas.annotations.Operation;
+
 @RestController
 @RequestMapping("/api/favorites")
 public class FavoriteController {
@@ -25,6 +27,7 @@ public class FavoriteController {
     }
 
     @GetMapping
+    @Operation(summary = "Get user's favorite places", description = "Retrieves all favorite places of the authenticated user.")
     public ResponseEntity<List<FavoriteResponse>> getUserFavorites(Authentication authentication) {
         String email = authentication.getName();
         List<FavoriteResponse> favorites = favoriteService.getUserFavorites(email);
@@ -32,6 +35,7 @@ public class FavoriteController {
     }
 
     @PostMapping("/{placeId}")
+    @Operation(summary = "Add a place to favorites", description = "Adds a place to the authenticated user's favorites.")
     public ResponseEntity<FavoriteResponse> addFavorite(Authentication authentication, @PathVariable Long placeId) {
         String email = authentication.getName();
         Favorite favorite = favoriteService.addFavorite(email, placeId);
@@ -41,6 +45,7 @@ public class FavoriteController {
     }
 
     @DeleteMapping("/{placeId}")
+    @Operation(summary = "Remove a place from favorites", description = "Removes a place from the authenticated user's favorites.")
     public ResponseEntity<Void> deleteFavorite(Authentication authentication, @PathVariable Long placeId) {
         String email = authentication.getName();
         favoriteService.removeFavorite(email, placeId);

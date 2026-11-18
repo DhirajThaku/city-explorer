@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cityexplorer.backend.user.dto.UserProfileResponse;
 import com.cityexplorer.backend.user.service.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -19,6 +21,7 @@ public class UserController {
     }
 
     @GetMapping("/me")
+    @Operation(summary = "Get current user profile", description = "Retrieves the profile details of the currently authenticated user.")
     public UserProfileResponse getMyProfile(Authentication authentication) {
         String email = authentication.getName();
 

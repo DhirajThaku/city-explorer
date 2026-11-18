@@ -26,6 +26,7 @@ import com.cityexplorer.backend.itinerary.repository.ItineraryRepository;
 import com.cityexplorer.backend.itinerary.service.ItineraryService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/itineraries")
@@ -40,7 +41,7 @@ public class ItineraryController {
 
     @Operation(summary = "Create an itinerary", description = "Creates a new itinerary for the authenticated user with a title, start date, and end date.")
     @PostMapping
-    public ResponseEntity<ItineraryResponse> createItinerary(@RequestBody CreateItineraryRequest request,
+    public ResponseEntity<ItineraryResponse> createItinerary(@Valid @RequestBody CreateItineraryRequest request,
             Authentication authentication) {
 
         ItineraryResponse itinerary = itineraryService.createItinerary(authentication.getName(), request.title(),
@@ -69,7 +70,7 @@ public class ItineraryController {
     @Operation(summary = "Update an itinerary", description = "Updates the title, start date, and end date of an existing itinerary belonging to the authenticated user.")
     @PutMapping("/{id}")
     public ResponseEntity<ItineraryResponse> updateItinerary(@PathVariable Long id,
-            @RequestBody UpdateItineraryRequest request, Authentication authentication) {
+            @Valid @RequestBody UpdateItineraryRequest request, Authentication authentication) {
         ItineraryResponse itinerary = itineraryService.updateItinerary(authentication.getName(), id, request.title(),
                 request.startDate(), request.endDate());
 
@@ -98,7 +99,7 @@ public class ItineraryController {
     @Operation(summary = "Add a stop to an itinerary day", description = "Adds an attraction as a stop to a specific day within the user's itinerary.")
     @PostMapping("/{itineraryId}/days/{dayId}/stops")
     public ResponseEntity<ItineraryStopResponse> addStop(@PathVariable Long itineraryId, @PathVariable Long dayId,
-            @RequestBody AddItineraryStopRequest request, Authentication authentication) {
+            @Valid @RequestBody AddItineraryStopRequest request, Authentication authentication) {
 
         // verify that the day belongs to the itinerary in the URL
         // (we'll add this validation in the service in the next step)

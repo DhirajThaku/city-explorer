@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cityexplorer.backend.attraction.dto.AttractionResponse;
 import com.cityexplorer.backend.attraction.service.AttractionService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 
@@ -28,6 +29,7 @@ public class NearbyAttractionController {
     }
 
     @GetMapping("/nearby")
+    @Operation(summary = "Find nearby attractions", description = "Retrieves attractions within the specified radius of the given latitude and longitude.")
     public ResponseEntity<List<AttractionResponse>> getNearbyAttractions(
             @RequestParam @DecimalMin("-90.0") @DecimalMax("90.0") BigDecimal latitude,
 

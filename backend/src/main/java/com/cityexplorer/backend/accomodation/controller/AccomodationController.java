@@ -16,6 +16,7 @@ import com.cityexplorer.backend.accomodation.dto.AccomodationResponse;
 import com.cityexplorer.backend.accomodation.service.AccomodationService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 
 @RestController
 @RequestMapping("/api/accommodations")
@@ -36,6 +37,7 @@ public class AccomodationController {
         return ResponseEntity.ok(accomodationService.getAllAccomodatioins(placeId, pageable));
     }
 
+    @Operation(summary = "Get accommodation by ID", description = "Retrieves the details of a specific accommodation using its ID.")
     @GetMapping("/{id}")
     public ResponseEntity<AccomodationResponse> getAccomodationById(@PathVariable Long id) {
 
