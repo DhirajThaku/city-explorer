@@ -1,0 +1,61 @@
+
+<div class="login-page">
+  <div class="login-container">
+
+    <div class="brand">
+      <h1>CityExplorer</h1>
+      <p>Discover places. Create memories.</p>
+    </div>
+
+    <div class="login-card">
+      <h2>Welcome Back!</h2>
+      <p class="subtitle">Sign in to continue your journey.</p>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input
+            type="email"
+            id="email"
+            formControlName="email"
+            placeholder="Enter your email"
+          />
+          @if(loginForm.controls.email.touched && loginForm.controls.email.hasError('required')){
+            <small class="error-text">Email is required.</small>
+          }
+
+          @if(loginForm.controls.email.touched && loginForm.controls.email.hasError('email')){
+            <small class="error-text">Please enter a valid email address.</small>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            formControlName="password"
+            placeholder="Enter your password"
+          />
+          @if(loginForm.controls.password.touched && loginForm.controls.password.hasError('required')){
+            <small class="error-text">Password is required.</small>
+          }
+        </div>
+
+        @if(errorMessage()){
+            <p class="error-text">{{errorMessage()}}</p>
+        }
+
+        <button type="submit" class="login-button" [disabled]="loading()">
+          {{loading() ? 'Logging in..' : 'Login'}}
+        </button>
+      </form>
+
+      <p class="register-link">
+        Don't have an account?
+        <a routerLink="/register">Create an account</a>
+      </p>
+    </div>
+
+  </div>
+</div>
