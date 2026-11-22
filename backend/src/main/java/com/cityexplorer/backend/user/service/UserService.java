@@ -37,17 +37,24 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User login(LoginRequest request) {
-        String email = request.getEmail().trim();
+    // public User login(LoginRequest request) {
+    // String email = request.getEmail().trim();
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
+    // User user = userRepository.findByEmail(email)
+    // .orElseThrow(() -> new IllegalArgumentException("Invalid email or
+    // password"));
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new IllegalArgumentException("Invalid email or password");
-        }
+    // if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+    // throw new IllegalArgumentException("Invalid email or password");
+    // }
 
-        return user;
+    // return user;
+    // }
+
+    public User findUserByEmail(String email) {
+
+        return userRepository.findByEmail(email.trim())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 
     public UserProfileResponse getMyProfile(String email) {

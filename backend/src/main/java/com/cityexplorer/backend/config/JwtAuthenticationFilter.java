@@ -5,7 +5,9 @@ import java.io.IOException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -27,20 +29,19 @@ import jakarta.servlet.http.HttpServletResponse;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
 
-    private final UserRepository userRepository;
+    // private final UserRepository userRepository;
+    private final UserDetailsService userDetailsService;
 
-    public JwtAuthenticationFilter(JwtService jwtService, UserRepository userRepository) {
+    public JwtAuthenticationFilter(JwtService jwtService, UserDetailsService userDetailsService) {
         this.jwtService = jwtService;
-        this.userRepository = userRepository;
+        this.userDetailsService = userDetailsService;
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws IOException, ServletException {
         String header = request.getHeader("Authorization");
-        System.out.println("Authorization header present: " + (header != null));
-        System.out.println("Bearer token present: "
-                + (header != null && header.startsWith("Bearer ")));
+
         if (header == null || !header.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
@@ -52,9 +53,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             Claims claims = jwtService.extractClaims(token);
             System.out.println("JWT validation successful");
             String email = claims.getSubject();
-            System.out.println("JWT email: " + email);
-            System.out.println("User exists: "
-                    + (email != null && userRepository.findByEmail(email).isPresent()));
+
             // checking that after token validation the email which we have got from token
             // is exist or not
             if (email == null) {
@@ -62,26 +61,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid JWT subject");
                 return;
             }
-            var userOptional = userRepository.findByEmail(email);
-            if (userOptional.isEmpty()) {
-                SecurityContextHolder.clearContext();
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User not found");
-                return;
-            }
+            // var userOptional = userRepository.findByEmail(email);
+            // if (userOptional.isEmpty()) {
+            // SecurityContextHolder.clearContext();
+            // response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User not found");
+            // return;
+            // }
             // if (email == null || !userRepository.findByEmail(email).isPresent()) {
             // SecurityContextHolder.clearContext();
             // response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User not found");
             // return;
             // }
-            var user = userOptional.get();
-
+            // var user = userOptional.get();
+            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
             if (SecurityContextHolder.getContext().getAuthentication() == null) {
                 // UsernamePasswordAuthenticationToken authentication = new
                 // UsernamePasswordAuthenticationToken(email,
                 // null, Collections.emptyList());
 
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(email,
-                        null, List.of(new SimpleGrantedAuthority(user.getRole().name())));
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                        userDetails,
+                        null, userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -89,7 +89,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         + (SecurityContextHolder.getContext().getAuthentication() != null));
             }
 
-        } catch (JwtException | IllegalArgumentException ex) {
+        } catch (JwtException | IllegalArgumentException | UsernameNotFoundException ex) {
             SecurityContextHolder.clearContext();
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid or expired JWT");
             return;

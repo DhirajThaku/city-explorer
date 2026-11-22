@@ -9,6 +9,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -18,6 +19,18 @@ import org.slf4j.LoggerFactory;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
         private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+        @ExceptionHandler(AuthenticationException.class)
+        public ResponseEntity<Map<String, Object>> handleAuthenticationException(
+                        AuthenticationException exception) {
+
+                return ResponseEntity
+                                .status(HttpStatus.UNAUTHORIZED)
+                                .body(Map.of(
+                                                "status", 401,
+                                                "error", "Unauthorized",
+                                                "message", "Invalid email or password"));
+        }
 
         @ExceptionHandler(ConstraintViolationException.class)
         public ResponseEntity<Map<String, Object>> handleConstraintViolation(
