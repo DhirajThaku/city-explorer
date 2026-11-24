@@ -86,7 +86,7 @@
         }
 
 
-        <button type="submit" class="register-button" [disabled]="loading()">
+        <button type="submit" class="register-button" [disabled]="loading() || registerForm.invalid">
           {{loading() ? 'Creating Account..':'Create Account'}}
         </button>
 
